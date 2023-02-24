@@ -3,11 +3,7 @@ const ContactService = require("../services/contact.service");
 const MongoDB = require("../untils/mongodb.until");
 const ApiError = require("../api-error");
 
-exports.create = (req, res) => {
-    res.send({ message: "create handler" });
-};
-
-exports.findAll = (req, res, next) => {
+exports.findAll = async(req, res, next) => {
     let documents = [];
     try {
         const contactService = new ContactService(MongoDB.client);
@@ -15,7 +11,7 @@ exports.findAll = (req, res, next) => {
         if (name) {
             documents = await contactService.findByName(name);
         } else {
-            documents = await contactService.findAll({});
+            documents = await contactService.find({});
         }
     } catch (error) {
         return next(
@@ -42,11 +38,11 @@ exports.findAllFavorite = (req, res) => {
 };
 
 exports.create = async(req, res, next) => {
-    if (!req.body ? .name) {
+    if (!req.body.name) {
         return next(new ApiError(400, "Name can not be empty"));
     }
     try {
-        const contactService = new contactService(MongoDB.client);
+        const contactService = new ContactService(MongoDB.client);
         const document = await contactService.create(req.body);
         return res.send(document);
     } catch (error) {
